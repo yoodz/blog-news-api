@@ -11,4 +11,6 @@ export default interface IModules {
     deleted: number
     /** 是否初始化 0 未初始化 1 已初始化 */
     init: number
+    email: string
+    updateAt: number
 }

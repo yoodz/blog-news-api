@@ -43,6 +43,25 @@ export class MongoDBService implements OnModuleInit, OnModuleDestroy {
         return result;
     }
 
+    // 新增：没有就插入，有就更新
+    async insertOrUpdate(collectionName: string, filter: any, update: any) {
+        const collection = this.db.collection(collectionName);
+        const options = { upsert: true }; // 设置 upsert 选项为 true
+
+        // 使用 $set 来指定要更新的字段
+        const result = await collection.updateOne(filter, { $set: update }, options);
+
+        if (result.upsertedCount > 0) {
+            console.log(`Inserted new document with _id: ${result.upsertedId}`);
+        } else if (result.modifiedCount > 0) {
+            console.log(`Updated existing document`);
+        } else {
+            console.log(`No changes were made`);
+        }
+
+        return result;
+    }
+
     // 插入文档
     async insertMany(collectionName: string, document: any) {
         const collection = this.db.collection(collectionName);

@@ -45,8 +45,10 @@ async function parserFeedUrl(validUrls, inXDay: number = 1) {
     const requsetStatus = Array.from({length: validUrls.length}).fill(false);
     for (let index = 0; index < validUrls.length; index++) {
         const url = validUrls[index];
+        console.log(url, 'feedUtil-48')
         try {
             let feed = await parser.parseURL(url);
+            console.log(feed, 'feedUtil-51')
             requsetStatus[index] = true;
             feed.items.forEach(item => {
                 const { title = '', link = '', pubDate = '' } = item || {}
@@ -57,12 +59,15 @@ async function parserFeedUrl(validUrls, inXDay: number = 1) {
                         link,
                         pubDate: dayjs(pubDate).format('YYYY-MM-DD HH:ss'),
                         hostname: urlFormat.hostname,
-                        pv: 0
+                        createAt: dayjs().valueOf(),
+                        pv: 0,
+                        like: 0
                     })
                 }
 
             });
         } catch (error) {
+            console.log(error, 'feedUtil-68')
             continue
         }
     }

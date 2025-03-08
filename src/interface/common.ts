@@ -8,4 +8,6 @@ export interface IResult {
     /** 网站域名 */
     hostname: string
     pv: number
+    like: number
+    createAt: number
 }

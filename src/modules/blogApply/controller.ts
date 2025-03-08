@@ -25,7 +25,6 @@ export class BlogApplyController {
       init: 0
     }
     const result = await this.blogApplyService.insert(blogData);
-    console.log(result, 'controller-27')
     return result.insertedId
   }
 }
