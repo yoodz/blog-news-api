@@ -11,7 +11,6 @@ export class MongoDBService implements OnModuleInit, OnModuleDestroy {
     // 初始化时连接数据库
     async onModuleInit() {
         try {
-            console.log(this.uri, 'mongo.service-14')
             this.client = new MongoClient(this.uri);
             await this.client.connect();
             this.db = this.client.db(this.dbName);
