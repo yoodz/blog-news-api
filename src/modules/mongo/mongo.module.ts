@@ -6,7 +6,7 @@ import { MongoDBService } from './mongo.service';
     providers: [
         {
             provide: MongoDBService,
-            useValue: new MongoDBService('mongostring', 'blog-news'),
+            useValue: new MongoDBService(process.env.MONGO_URI || '', 'blog-news'),
         },
     ],
     exports: [MongoDBService], // 导出服务
