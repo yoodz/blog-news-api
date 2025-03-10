@@ -10,7 +10,7 @@ export default class TasksService {
   constructor(private readonly mongoDBService: MongoDBService) { }
 
   // 每日执行一次，检查库里的rss地址是否有更新
-  @Cron('0 9 * * *')
+  @Cron('15 13 * * *')
   async handleCron() {
     this.logger.debug('start every day check');
     const rssUrl = await this.mongoDBService.find('rss-url', { deleted: 0, status: 1 })
@@ -33,7 +33,7 @@ export default class TasksService {
         await this.mongoDBService.update('rss-url', { rssUrl: _rssUrl }, { errorCount: errorCount + 1, updateAt: dayjs().format('YYYY-MM-DD HH:mm') })
       }
     }
-    await this.mongoDBService.insertOrUpdate('config', {}, { updateAt: dayjs().valueOf() })
+    await this.mongoDBService.insertOrUpdate('config', {}, { updateAt: dayjs().format('YYYY-MM-DD HH:mm') })
   }
 
   // 5min 执行一次，检查有没有新审核通过的rss地址，进行初始化

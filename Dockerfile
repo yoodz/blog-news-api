@@ -18,6 +18,10 @@ FROM node:20-alpine AS production
 
 ENV NODE_ENV=production
 
+# 设置时区
+ENV TZ=Asia/Shanghai
+RUN apk add --no-cache tzdata
+
 WORKDIR /usr/src/app
 
 # 复制仅需要的生产依赖包文件
