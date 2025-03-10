@@ -40,21 +40,20 @@ async function parserFeedUrl(validUrls, inXDay: number = 1) {
     // const url = 'https://hadb.me/atom.xml'
     // const url = 'https://innei.in/feed'
     if (!validUrls?.length) return { result: [], requsetStatus: [] }
-    const result: IResult[] = [];
+    const result: IResult[][] = [];
     // 记录多个rss地址的初始化状态
     const requsetStatus = Array.from({length: validUrls.length}).fill(false);
     for (let index = 0; index < validUrls.length; index++) {
         const url = validUrls[index];
-        console.log(url, 'feedUtil-48')
+        const currentResut: IResult[] = []
         try {
             let feed = await parser.parseURL(url);
-            console.log(feed, 'feedUtil-51')
             requsetStatus[index] = true;
             feed.items.forEach(item => {
                 const { title = '', link = '', pubDate = '' } = item || {}
                 if (isWithinXHours(pubDate, inXDay)) {
                     const urlFormat = new URL(link || '')
-                    result.push({
+                    currentResut.push({
                         title,
                         link,
                         pubDate: dayjs(pubDate).format('YYYY-MM-DD HH:ss'),
@@ -70,6 +69,7 @@ async function parserFeedUrl(validUrls, inXDay: number = 1) {
             console.log(error, 'feedUtil-68')
             continue
         }
+        result[index] = currentResut
     }
     return { result, requsetStatus }
 }

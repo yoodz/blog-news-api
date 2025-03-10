@@ -10,22 +10,20 @@ export default class TasksService {
   constructor(private readonly mongoDBService: MongoDBService) { }
 
   // 每日执行一次，检查库里的rss地址是否有更新
-  @Cron('15 13 * * *')
+  @Cron('1 8 * * *')
   async handleCron() {
     this.logger.debug('start every day check');
     const rssUrl = await this.mongoDBService.find('rss-url', { deleted: 0, status: 1 })
     const validUrls = rssUrl?.map(item => item.rssUrl) || []
     const { result, requsetStatus } = await parserFeedUrl(validUrls)
     console.log(result, 'TasksService-19')
-
-
     for (let index = 0; index < requsetStatus.length; index++) {
       const element = requsetStatus[index];
       const { errorCount, rssUrl: _rssUrl } = rssUrl[index] || {}
       console.log(element, 'TasksService-32')
       if (element) {
-        if (result.length) {
-          this.mongoDBService.insertMany('article', result)
+        if (result[index]?.length) {
+          this.mongoDBService.insertMany('article', result[index])
         }
         await this.mongoDBService.update('rss-url', { rssUrl: _rssUrl }, { updateAt: dayjs().format('YYYY-MM-DD HH:mm') })
       } else {
@@ -43,16 +41,15 @@ export default class TasksService {
     const rssUrl = await this.mongoDBService.find('rss-url', { deleted: 0, status: 1, init: 0 })
     const validUrls = rssUrl?.map(item => item.rssUrl) || []
     const { result, requsetStatus } = await parserFeedUrl(validUrls, 999)
-    console.log(result, requsetStatus, 'TasksService-46')
 
     // 更新rss url 初始化状态
     for (let index = 0; index < requsetStatus.length; index++) {
       const element = requsetStatus[index];
       const { errorCount, rssUrl: _rssUrl } = rssUrl[index] || {}
       if (element) {
-        if (result.length) {
+        if (result[index]?.length) {
           // 更新获取到文章
-          await this.mongoDBService.insertMany('article', result)
+          await this.mongoDBService.insertMany('article', result[index])
         }
         await this.mongoDBService.update('rss-url', { rssUrl: _rssUrl }, { init: 1, updateAt: dayjs().format('YYYY-MM-DD HH:mm') })
       } else {
