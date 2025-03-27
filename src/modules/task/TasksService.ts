@@ -10,7 +10,7 @@ export default class TasksService {
   constructor(private readonly mongoDBService: MongoDBService) { }
 
   // 每日执行一次，检查库里的rss地址是否有更新
-  @Cron('50 7 * * *')
+  @Cron('50 5 * * *')
   async handleCron() {
     this.logger.debug('start every day check');
     const rssUrl = await this.mongoDBService.find('rss-url', { deleted: 0, status: 1 })
