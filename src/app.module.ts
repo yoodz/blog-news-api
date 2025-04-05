@@ -6,11 +6,13 @@ import { BlogApplyController } from './modules/blogApply/controller';
 import { AppService } from './app.service';
 import TasksService from './modules/task/TasksService'
 import { BlogApplyService } from './modules/blogApply/service'
-import { MongoDBModule } from './modules/mongo/mongo.module';
+// import { MongoDBModule } from './modules/mongo/mongo.module';
 
 @Module({
-  imports: [ScheduleModule.forRoot(), MongoDBModule],
-  controllers: [AppController, BlogApplyController],
-  providers: [AppService, TasksService, BlogApplyService],
+  imports: [ScheduleModule.forRoot()],
+  // controllers: [AppController, BlogApplyController],
+  controllers: [],
+  // providers: [AppService, TasksService, BlogApplyService],
+  providers: [TasksService,],
 })
 export class AppModule { }
