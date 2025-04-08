@@ -66,7 +66,7 @@ async function parserFeedUrl(validUrls, inXDay: number = 1) {
 
             });
         } catch (error) {
-            console.log(error, 'feedUtil-68')
+            console.error(`request new article error, ${JSON.stringify(error)}`);
             continue
         }
         result[index] = currentResut

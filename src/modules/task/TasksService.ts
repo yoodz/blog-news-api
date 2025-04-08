@@ -11,9 +11,10 @@ export default class TasksService {
   // constructor(private readonly mongoDBService: MongoDBService) { }
 
   // 每日执行一次，检查库里的rss地址是否有更新
+  // @Cron('* * * * *')
   @Cron('50 5 * * *')
   async handleCron() {
-    this.logger.debug('start every day check');
+    this.logger.debug('start every day check in 5:50');
     const rssUrl: any = await getRss(1)
     const validUrls = rssUrl?.map(item => item.rssUrl) || []
     const { result, requsetStatus } = await parserFeedUrl(validUrls)
@@ -22,6 +23,7 @@ export default class TasksService {
       const { errorCount, rssUrl: _rssUrl } = rssUrl[index] || {}
       if (element) {
         if (result[index]?.length) {
+          this.logger.debug(`get new article in every day check,${_rssUrl} - ${JSON.stringify(result[index])}`);
           await insertArticle(result[index])
         }
         await updateRss({ rssUrl: _rssUrl, updateAt: dayjs().format('YYYY-MM-DD HH:mm') })
