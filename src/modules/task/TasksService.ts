@@ -17,7 +17,7 @@ export default class TasksService {
     this.logger.debug('start every day check in 5:50');
     const rssUrl: any = await getRss(1)
     const validUrls = rssUrl?.map(item => item.rssUrl) || []
-    const { result, requsetStatus } = await parserFeedUrl(validUrls)
+    const { result, requsetStatus } = await parserFeedUrl(validUrls, 5)
     for (let index = 0; index < requsetStatus.length; index++) {
       const element = requsetStatus[index];
       const { errorCount, rssUrl: _rssUrl } = rssUrl[index] || {}
