@@ -41,3 +41,20 @@ export async function insertArticle(reqData) {
     const data = await response.json();
     console.log(`新增文章成功, ${JSON.stringify(reqData)}`);
 }
+
+
+/**
+ * 使用 fetch 发送 POST 请求
+ * @param url 请求地址
+ * @param body 请求体（可选）
+ * @returns Promise<Response>
+ */
+export async function postWithFetch(url: string, body?: any): Promise<Response> {
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: body ? JSON.stringify(body) : undefined
+    });
+}
