@@ -73,7 +73,7 @@ export default class TasksService {
       }
 
     } catch (error) {
-
+          this.logger.error(error);
     }
   }
 }
