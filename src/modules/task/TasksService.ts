@@ -43,31 +43,37 @@ export default class TasksService {
   // 5min 执行一次，检查有没有新审核通过的rss地址，进行初始化
   @Cron('*/5 * * * *')
   async initRssList() {
-    this.logger.debug('[initRssList] Called when the current second is 5');
-    // const rssUrl = await this.mongoDBService.find('rss-url', { deleted: 0, status: 1, init: 0 })
-    const rssUrl: any = await getRss(0)
-    const validUrls = rssUrl?.map(item => item.rssUrl) || []
-    const { result, requsetStatus } = await parserFeedUrl(validUrls, 999)
-    let flag = false
-    // 更新rss url 初始化状态
-    for (let index = 0; index < requsetStatus.length; index++) {
-      const element = requsetStatus[index];
-      const { errorCount, rssUrl: _rssUrl } = rssUrl[index] || {}
-      if (element) {
-        if (result[index]?.length) {
-          // 更新获取到文章
-          await insertArticle(result[index])
-          flag = true
+    try {
+      this.logger.debug('[initRssList] Called when the current second is 5');
+      // const rssUrl = await this.mongoDBService.find('rss-url', { deleted: 0, status: 1, init: 0 })
+      const rssUrl: any = await getRss(0)
+      const validUrls = rssUrl?.map(item => item.rssUrl) || []
+      const { result, requsetStatus } = await parserFeedUrl(validUrls, 999)
+      let flag = false
+      // 更新rss url 初始化状态
+      for (let index = 0; index < requsetStatus.length; index++) {
+        const element = requsetStatus[index];
+        const { errorCount, rssUrl: _rssUrl } = rssUrl[index] || {}
+        if (element) {
+          if (result[index]?.length) {
+            // 更新获取到文章
+            await insertArticle(result[index])
+            flag = true
+          }
+          await updateRss({ rssUrl: _rssUrl, updateAt: dayjs().format('YYYY-MM-DD HH:mm'), errorCount: errorCount + 1, init: 1 })
+        } else {
+          this.logger.debug(`[initRssList] ${_rssUrl} 初始化失败`);
+          await updateRss({ rssUrl: _rssUrl, updateAt: dayjs().format('YYYY-MM-DD HH:mm'), errorCount: errorCount + 1 })
         }
-        await updateRss({ rssUrl: _rssUrl, updateAt: dayjs().format('YYYY-MM-DD HH:mm'), errorCount: errorCount + 1, init: 1 })
-      } else {
-        this.logger.debug(`[initRssList] ${_rssUrl} 初始化失败`);
-        await updateRss({ rssUrl: _rssUrl, updateAt: dayjs().format('YYYY-MM-DD HH:mm'), errorCount: errorCount + 1 })
       }
-    }
 
-    if (flag) {
-      await postWithFetch("https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/1127d4e5-ca37-4855-bfcb-ada9ae76c7df")
+      this.logger.debug(`flag: ${flag}`);
+      if (flag) {
+        await postWithFetch("https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/1127d4e5-ca37-4855-bfcb-ada9ae76c7df")
+      }
+
+    } catch (error) {
+
     }
   }
 }
