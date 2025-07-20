@@ -35,6 +35,7 @@ export default class TasksService {
       }
       updateTimeInConfig(dayjs().format('YYYY-MM-DD HH:mm'))
       await postWithFetch("https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/1127d4e5-ca37-4855-bfcb-ada9ae76c7df")
+      this.logger.debug('end every day check in 5:50');
     } catch (error) {
       console.log(error, 'TasksService-42')
     }
@@ -44,7 +45,7 @@ export default class TasksService {
   @Cron('*/5 * * * *')
   async initRssList() {
     try {
-      this.logger.debug('[initRssList] Called when the current second is 5');
+      this.logger.debug('start every 5 min check init rss list');
       // const rssUrl = await this.mongoDBService.find('rss-url', { deleted: 0, status: 1, init: 0 })
       const rssUrl: any = await getRss(0)
       const validUrls = rssUrl?.map(item => item.rssUrl) || []
@@ -69,6 +70,7 @@ export default class TasksService {
 
       this.logger.debug(`flag: ${flag}`);
       if (flag) {
+        this.logger.debug('initRssList: 有新文章，触发部署');
         await postWithFetch("https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/1127d4e5-ca37-4855-bfcb-ada9ae76c7df")
       }
 
