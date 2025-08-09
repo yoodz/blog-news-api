@@ -18,6 +18,7 @@ export async function updateRss(reqData) {
     const response = await fetch(`${BASE_URL}/rss/update`, {
         method: 'post',
         body: JSON.stringify(reqData),
+        timeout: 10000,
         headers: { 'Content-Type': 'application/json' }
     });
     const data = await response.json();
@@ -26,7 +27,9 @@ export async function updateRss(reqData) {
 }
 
 export async function getRss(init) {
-    const response = await fetch(`${BASE_URL}/rss?init=${init}`);
+    const response = await fetch(`${BASE_URL}/rss?init=${init}`, {
+        timeout: 10000,
+    });
     const data = await response.json();
     console.log(`获取到${init ? '初始化的' : "未初始化"}rss的列表长度为  ${data.result?.length}`);
     return data.result || [];
@@ -35,6 +38,7 @@ export async function getRss(init) {
 export async function insertArticle(reqData) {
     const response = await fetch(`${BASE_URL}/article/addMany`, {
         method: 'post',
+        timeout: 10000,
         body: JSON.stringify({ list: reqData }),
         headers: { 'Content-Type': 'application/json' }
     });
@@ -52,6 +56,7 @@ export async function insertArticle(reqData) {
 export async function postWithFetch(url: string, body?: any): Promise<Response> {
     return fetch(url, {
         method: 'POST',
+        timeout: 10000,
         headers: {
             'Content-Type': 'application/json'
         },
