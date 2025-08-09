@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-const BASE_URL = 'https://cf.afunny.top'
+const BASE_URL = 'http://cf.afunny.top'
 // const BASE_URL = 'http://127.0.0.1:8787'
 export async function updateTimeInConfig(date) {
     const response = await fetch(`${BASE_URL}/config/update_at`, {
