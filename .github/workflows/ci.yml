@@ -6,6 +6,20 @@ on:
       - main  # 触发条件，此处表示当有push到main分支时触发
 
 jobs:
+  test-ip-access:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Test IP with curl
+      run: |
+        # 测试 HTTPS 访问
+        echo "=== HTTPS Test ==="
+        curl -v -I --connect-timeout 10 --max-time 15 \
+          "http://v.afunny.top:8089/dashboard" || \
+          echo "HTTPS request failed with exit code: $?"
+        
+
+jobs:
   build-and-push:
     runs-on: ubuntu-latest
     
